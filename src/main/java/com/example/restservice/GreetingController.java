@@ -1,17 +1,21 @@
-package com.example.restservices;
+package com.example.restservice;
 
-import java.util.concurrent.atomic.AtomicLong;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GreetingController {
-    private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
+
+    private final JpaRepository<Greeting, Long> repository;
+
+    public GreetingController(JpaRepository<Greeting, Long> repository) {
+        this.repository = repository;
+    }
 
     @GetMapping("/greeting")
     public Greeting greeting(@RequestParam(defaultValue = "World") String name) {
-        return new Greeting(counter.incrementAndGet(), String.format(template, name));
+        Greeting greeting = new Greeting("Hello, " + name + "!");
+        Greeting saved = repository.save(greeting);
+        return new Greeting(saved.getId(), saved.getContent());
     }
 }
