@@ -2,9 +2,9 @@ name: App & Database Integration Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/rest-service" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "feature/rest-service" ]
 
 jobs:
   integration-test:
