@@ -1,0 +1,59 @@
+name: App & Database Integration Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: greetings_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build application image
+        run: |
+          docker build -t rest-app-test .
+
+      - name: Run docker-compose stack
+        run: |
+          docker compose up -d
+          echo "Waiting for MySQL to be healthy..."
+          for i in {1..20}; do
+            if [ "$(docker inspect -f '{{.State.Health.Status}}' devopstask-mysql-1)" = "healthy" ]; then
+              echo "MySQL is healthy!"
+              break
+            fi
+            echo "Still waiting..."
+            sleep 5
+          done
+
+      - name: Test endpoint
+        run: |
+          echo "Testing /greeting endpoint"
+          curl -f "http://localhost:8080/greeting?name=GitHub"
+
+      - name: Check database entry
+        run: |
+          echo "Checking MySQL data..."
+          docker exec devopstask-mysql-1 mysql -u root -psecret -N -e \
+            "SELECT id, content FROM greetings_db.greetings ORDER BY id;"
