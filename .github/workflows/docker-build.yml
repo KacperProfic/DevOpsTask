@@ -2,9 +2,9 @@ name: Docker Image Build Check
 
 on:
   push:
-    branches: [ "feature/rest-service" ]
+    branches: [ "main", "feature/rest-service" ]
   pull_request:
-    branches: [ "feature/rest-service" ]
+    branches: [ "main", "feature/rest-service" ]
 
 jobs:
   docker-build:
