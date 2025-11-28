@@ -63,4 +63,4 @@ jobs:
         run: |
           echo "Database content:"
           docker exec devopstask-mysql-1 mysql -u root -psecret -N -e \
-            "SELECT id, content FROM greetings_db.greetings WHERE content LIKE '%GitHubActions%' LIMIT 5;
+            "SELECT id, content FROM greetings_db.greetings ORDER BY id;"
