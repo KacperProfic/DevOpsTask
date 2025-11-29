@@ -1,14 +1,15 @@
 package com.example.restservice;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GreetingController {
 
-    private final JpaRepository<Greeting, Long> repository;
+    private final GreetingRepository repository;
 
-    public GreetingController(JpaRepository<Greeting, Long> repository) {
+    @Autowired
+    public GreetingController(GreetingRepository repository) {
         this.repository = repository;
     }
 
