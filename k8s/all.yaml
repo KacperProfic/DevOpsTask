@@ -1,4 +1,4 @@
-# [tutaj wklejam Ci gotowy, działający plik – 100 % sprawdzony]
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
